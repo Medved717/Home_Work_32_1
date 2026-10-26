@@ -122,3 +122,13 @@ class ValidationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('non_field_errors')[0], 'Введена недопустимая ссылка!')
 
+class SubscriptionsTests(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(email='test@test.ru', is_staff=True)
+        self.client.force_authenticate(user=self.user)
+        self.course = Course.objects.create(title='Python разработчик',
+                                                   description='Курс по изучению языка программирования python.')
+
+    def test_subscription(self):
+        url = reverse('educations:subscription', )
