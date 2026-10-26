@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
 from educations.models import Course
-from users.models import Payment, User, Subscriptions
+from users.models import Payment, User
 from users.serializers import PaymentSerializer, UserSerializer, SubscriptionsSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 

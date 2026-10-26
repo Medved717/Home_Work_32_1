@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
 from educations.models import Subscriptions
-from users.models import Payment, User,
-from users.views import SubscriptionsAPIView
+from users.models import Payment, User
 
 
 class UserSerializer(serializers.ModelSerializer):
