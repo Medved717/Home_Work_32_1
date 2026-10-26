@@ -65,9 +65,11 @@ class Lesson(models.Model):
 
 
 class Subscriptions(models.Model):
-    user = models.ForeignKey(User, verbose_name='Подписка пользователя', on_delete=models.CASCADE, related_name='subscriptions_user')
-    course = models.ForeignKey(Course, verbose_name='Курс подписки', on_delete=models.CASCADE)
-    # subscription_activity = models.BooleanField(verbose_name='Активность подписки', default=False)
+    user = models.ForeignKey(User, verbose_name='Подписка пользователя', on_delete=models.CASCADE,
+                             related_name='user_subscriptions')
+    course = models.ForeignKey(Course, verbose_name='Курс подписки', on_delete=models.CASCADE,
+                               related_name='subscriptions_user')
+
 
     class Meta:
         verbose_name = 'Подписка'
