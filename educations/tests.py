@@ -103,3 +103,22 @@ class LessonsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Lesson.objects.all().count(), 1)
         self.assertEqual(Lesson.objects.get(title='Dict').title, 'Dict')
+
+class ValidationTests(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(email='test@test.ru', is_staff=True)
+        self.client.force_authenticate(user=self.user)
+
+    def test_invalid_link(self):
+        url = reverse('educations:lessons_create')
+        data = {
+            'title': 'Урок списков',
+            'description': 'Списки в языке программирования python',
+            'link_on_video': 'http://vk.ru/video/1'
+        }
+        response = self.client.post(url, data)
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('non_field_errors')[0], 'Введена недопустимая ссылка!')
+
