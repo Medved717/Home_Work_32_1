@@ -2,6 +2,8 @@ from rest_framework.exceptions import ValidationError
 
 
 class InvalidLinkValidator:
+    def __init__(self, field):
+        self.field = field
 
     def __call__(self, value):
         valid_link = 'youtube.com'
