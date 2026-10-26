@@ -32,13 +32,13 @@ class CourseViewSet(ModelViewSet):
 class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    pagination_lesson = LessonPaginations
+    pagination_class = LessonPaginations
 
 
 class LessonCreateAPIView(CreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = (IsAdminUser | IsAuthenticated & ~IsModer)
+    permission_classes = (IsAdminUser | IsAuthenticated & ~IsModer,)
 
     def perform_create(self, serializer):
         lesson = serializer.save()
