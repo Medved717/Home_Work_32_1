@@ -15,8 +15,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(permission_classes=(AllowAny,)), name='token_refresh'),
     path('payments/list/', PaymentListAPIView.as_view(), name='payments_list'),
-    path('subscription/', SubscriptionsAPIView.as_view(), name='subscription'),
-
 ]
 
 

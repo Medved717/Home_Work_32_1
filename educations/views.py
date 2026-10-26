@@ -1,10 +1,12 @@
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
-                                     UpdateAPIView)
+                                     UpdateAPIView, get_object_or_404)
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from educations.models import Course, Lesson
+from educations.models import Course, Lesson, Subscriptions
 from educations.paginators import CoursePaginations, LessonPaginations
 from educations.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModer, IsOwner
@@ -62,3 +64,22 @@ class LessonDestroyAPIViews(DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = (IsAdminUser | IsOwner,)
     serializer_class = LessonSerializer
+
+
+class SubscriptionsAPIView(APIView):
+
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data.get('course_id')
+        course = get_object_or_404(Course, pk=course_id)
+        subscriptions = Subscriptions.objects.filter(user=user, course=course)
+
+        if subscriptions.exists():
+            subscriptions.delete()
+            message = 'Ваша подписка удалена'
+
+        else:
+            Subscriptions.objects.create(user=user, course=course)
+            message = 'Ваша подписка активирована'
+        return Response({'message': message})
+
