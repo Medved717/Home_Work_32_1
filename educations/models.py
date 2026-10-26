@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from django.conf import settings
 
 
 class Course(models.Model):
@@ -56,7 +56,7 @@ class Lesson(models.Model):
         null=True,
     )
 
-    owner = models.ForeignKey(User, verbose_name='Владелец урока', on_delete=models.SET_NULL, blank=True, null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Владелец урока', on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         verbose_name = "Урок"
@@ -65,7 +65,7 @@ class Lesson(models.Model):
 
 
 class Subscriptions(models.Model):
-    user = models.ForeignKey(User, verbose_name='Подписка пользователя', on_delete=models.CASCADE,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Подписка пользователя', on_delete=models.CASCADE,
                              related_name='user_subscriptions')
     course = models.ForeignKey(Course, verbose_name='Курс подписки', on_delete=models.CASCADE,
                                related_name='subscriptions_user')
