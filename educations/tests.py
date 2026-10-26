@@ -1,18 +1,21 @@
+from http.client import responses
+
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.urls import reverse
-from educations.models import Course
+from educations.models import Course, Lesson
 from users.models import User
 
 
-class CourseTest(APITestCase):
+class CoursesTests(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(email='test@test.ru', is_staff=True)
         self.client.force_authenticate(user=self.user)
-        self.course_python = Course.objects.create(title='Python разработчик', description='Курс по изучению языка программирования python.')
+        self.course_python = Course.objects.create(title='Python разработчик',
+                                                   description='Курс по изучению языка программирования python.')
         self.course_C = Course.objects.create(title='C++ разработчик',
-                                                   description='Курс по изучению языка программирования C++.')
+                                              description='Курс по изучению языка программирования C++.')
 
     def test_create_course(self):
         url = reverse('educations:courses-list')
@@ -49,3 +52,54 @@ class CourseTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Course.objects.all().count(), 1)
         self.assertEqual(Course.objects.get(title='Python разработчик').title, 'Python разработчик')
+
+
+class LessonsTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(email='test@test.ru', is_staff=True)
+        self.client.force_authenticate(user=self.user)
+        self.course_python = Course.objects.create(title='Python разработчик',
+                                                   description='Курс по изучению языка программирования python.')
+        self.lesson_git = Lesson.objects.create(title='Git', description='Урок по основам git',
+                                                course=self.course_python)
+        self.lesson_dict = Lesson.objects.create(title='Dict', description='Словари в python')
+
+    def test_create_lesson(self):
+        url = reverse('educations:lessons_create')
+        data = {
+            'title': 'Урок списков',
+            'description': 'Списки в языке программирования python'
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Lesson.objects.get(title='Урок списков').title, 'Урок списков')
+        self.assertEqual(Lesson.objects.get(title='Урок списков').owner, self.user)
+
+    def test_list_lesson(self):
+        url = reverse('educations:lessons_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Lesson.objects.all().count(), 2)
+        self.assertEqual(response.data.get('count'), 2)
+
+    def test_detail_lesson(self):
+        url = reverse('educations:lessons_retrieve', args=(self.lesson_git.pk,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Lesson.objects.get(title='Git').title, 'Git')
+
+    def test_update_lesson(self):
+        url = reverse('educations:lessons_update', args=(self.lesson_git.pk,))
+        data = {
+            'title': 'Изменен'
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Lesson.objects.get(title='Изменен').title, 'Изменен')
+
+    def test_delete_lesson(self):
+        url = reverse('educations:lessons_delete', args=(self.lesson_git.pk,))
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Lesson.objects.all().count(), 1)
+        self.assertEqual(Lesson.objects.get(title='Dict').title, 'Dict')
