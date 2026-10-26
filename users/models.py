@@ -71,3 +71,5 @@ class Payment(models.Model):
 
     def __str__(self):
         return f'Оплата от: {self.user} на сумму {self.payment_amount}'
+
+
