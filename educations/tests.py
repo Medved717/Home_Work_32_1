@@ -3,7 +3,7 @@ from http.client import responses
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.urls import reverse
-from educations.models import Course, Lesson
+from educations.models import Course, Lesson, Subscriptions
 from users.models import User
 
 
@@ -131,4 +131,16 @@ class SubscriptionsTests(APITestCase):
                                                    description='Курс по изучению языка программирования python.')
 
     def test_subscription(self):
-        url = reverse('educations:subscription', )
+        url = reverse('educations:subscription')
+        data = {
+            'course_id': self.course.pk
+        }
+
+        response = self.client.post(url, data)
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(Subscriptions.objects.filter(user=self.user, course=self.course)),1)
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(Subscriptions.objects.filter(user=self.user, course=self.course)), 0)
